@@ -1,0 +1,629 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <title>Signature Numérique</title>
+    <meta charset="utf-8"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!--jquery  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+     <!--bootstrap  -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"></link>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"></link>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <!--bootstrap font style  -->
+       <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"></link>
+
+
+    <script src="node_modules/blueimp-file-upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="node_modules/blueimp-file-upload/js/jquery.fileupload.js"></script>
+      <script src="node_modules/blueimp-file-upload/js/jquery.iframe-transport.js"></script>
+      <script src="node_modules/pdf-lib/dist/pdf-lib.min.js"></script>
+      <script src="node_modules/pdfjs-dist/build/pdf.js"></script>
+      <script src="https://rawgit.com/kangax/fabric.js/master/dist/fabric.js"></script>
+      <script src="node_modules/moment/moment.js"></script>
+      <script src="https://unpkg.com/downloadjs@1.4.7"></script>
+      <script type="text/javascript" src="js/tools.js"></script>
+      <script type="text/javascript" src="js/key.js"></script>
+      <script type="text/javascript" src="js/sign.js"></script>
+      <script type="text/javascript" src="js/verify.js"></script>
+        <script type="text/javascript" src="js/search.js"></script>
+      <link href="css/style.css" rel="stylesheet" type="text/css">
+
+
+ <!--stepper  -->
+  <script src="https://cdn.jsdelivr.net/npm/bs-stepper/dist/js/bs-stepper.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bs-stepper/dist/css/bs-stepper.min.css" rel="stylesheet"></link>
+
+ <!--toggle button -->
+ <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+ <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+  </head>
+  <body>
+    <nav class="nav nav-tabs">
+      <a class="nav-item nav-link active" href="#p1" data-toggle="tab">Signer</a>
+      <a class="nav-item nav-link" href="#p2" data-toggle="tab">Vérifier</a>
+      <a class="nav-item nav-link" href="#p3" data-toggle="tab">Générer clés</a>
+    </nav>
+    <div class="tab-content">
+      <!--Panneau Signer-->
+      <div class="tab-pane active" id="p1">
+        <h1><b>Signature PDF</b></h1>
+      <div class="container justify-content-center">
+
+
+     <!--  stepper -->
+        <div class="bs-stepper" id="stepper1">
+            <div class="bs-stepper-header" role="tablist">
+              <!-- your steps here -->
+              <div class="step" data-target="#key-part">
+                <button type="button" class="step-trigger" role="tab" aria-controls="key-part" id="key-part-trigger">
+                  <span class="bs-stepper-circle">1</span>
+                  <span class="bs-stepper-label">Clé de signature</span>
+                </button>
+              </div>
+              <div class="line"></div>
+              <div class="step" data-target="#files-part">
+                <button type="button" class="step-trigger" role="tab" aria-controls="files-part" id="files-part-trigger">
+                  <span class="bs-stepper-circle">2</span>
+                  <span class="bs-stepper-label">Fichiers pdf</span>
+                </button>
+              </div>
+              <div class="line"></div>
+              <div class="step" data-target="#image-part">
+                <button type="button" class="step-trigger" role="tab" aria-controls="image-part" id="image-part-trigger">
+                  <span class="bs-stepper-circle">3</span>
+                  <span class="bs-stepper-label">Signature manuscrite</span>
+                </button>
+              </div>
+              <div class="line"></div>
+              <div class="step" data-target="#draw-part">
+                <button type="button" class="step-trigger" role="tab" aria-controls="draw-part" id="draw-part-trigger">
+                  <span class="bs-stepper-circle">4</span>
+                  <span class="bs-stepper-label">Modifier</span>
+                </button>
+              </div>
+              <div class="line"></div>
+              <div class="step" data-target="#sign-part">
+                <button type="button" class="step-trigger" role="tab" aria-controls="sign-part" id="sign-part-trigger">
+                  <span class="bs-stepper-circle">5</span>
+                  <span class="bs-stepper-label">Signer</span>
+                </button>
+              </div>
+            </div>
+            <div class="bs-stepper-content">
+              <!-- your steps content here -->
+              <div id="key-part" class="content" role="tabpanel" aria-labelledby="key-part-trigger">
+                <!--  dropzone key upload -->
+                 <div class="container p-3">
+
+                   <div class="card">
+                     <div class="card-header text-center">
+                         Insérez ici votre clé de signature
+                     </div>
+
+                  <div class="card-body">
+                    <div class="d-flex flex-row">
+                      <div class="p-2">
+                        <label class="btn btn-success custom-file-upload">
+                               <i class="fa fa-plus"></i>
+                               <span>Add key...</span>
+                               <input type="file" name="files[]"  id="sig-keyupload" />
+                       </label>
+                      </div>
+                      <div class="p-2">
+                        <button type="button" name="sig-key-delete" class="btn btn-danger delete">
+                          <i class="fa fa-trash"></i>
+                          <span>Delete</span>
+                        </button>
+                      </div>
+                    </div>
+                  <div id="sig-key-dropzone" class="fade well container-fluid d-flex flex-column dropzone"  >
+
+                    <div id="sig-key-icon" class="p-1">
+                      <img src="images/filemanager/upload.jpeg" name="arrow-down-icon" class=" mx-auto d-block img-fluid" width="70" height="70" alt="">
+                    </div>
+                    <div class="d-flex justify-content-center">Vous pouvez glisser des fichiers ici pour les ajouter</div>
+                  </div>
+                  </div>
+                   <div class="card-footer text-center position-relative">
+                     <div id="sig-key-scroll" class=" d-none">
+                       <table class="table h6" >
+                         <thead>
+                          <tr>
+                            <th>Select</th>
+                            <th>Type</th>
+                            <th>Fichier</th>
+                            <th>Size</th>
+                          </tr>
+                          <tbody id="sig-key-list">
+
+                          </tbody>
+                        </thead>
+                       </table>
+                       <div class="d-flex justify-content-end p-2">
+                         <button type="button" class="btn btn-primary" onclick="stepper1.next()" id="next-1">Next</button>
+                       </div>
+                     </div>
+                   </div>
+                  </div>
+                 </div>
+                 <!--  dropzone key upload END -->
+
+              </div>
+              <div id="files-part" class="content" role="tabpanel" aria-labelledby="files-part-trigger">
+                <!--  dropzone pdf upload -->
+                <div class="container p-3" name="sig-pdf">
+                  <div class="card">
+                    <div class="card-header text-center">
+                    Insérez ici vos pdf
+                    </div>
+
+                 <div class="card-body">
+                   <div class="d-flex flex-row">
+                     <div class="p-2">
+                       <label class="btn btn-success custom-file-upload">
+                              <i class="fa fa-plus"></i>
+                              <span>Add files...</span>
+                              <input type="file" name="files[]" multiple id="sig-fileupload"/>
+                      </label>
+                     </div>
+                     <div class="p-2">
+                       <button type="button" name="sig-file-delete-selected" class="btn btn-danger delete">
+                         <i class="fa fa-trash"></i>
+                         <span>Delete selected</span>
+                       </button>
+                     </div>
+                     <div class="p-2">
+                       <button type="button" name="sig-file-select-all" class="btn btn-info select">
+                       <i class="fa fa-check"></i>
+                       <span>Select all</span>
+                     </button>
+                     </div>
+                   </div>
+                 <div id="sig-file-dropzone" class="fade well container-fluid d-flex flex-column dropzone"  >
+
+                   <div id="sig-file-icon" class="p-1">
+                     <img src="images/filemanager/upload.jpeg" name="arrow-down-icon"  class=" mx-auto d-block img-fluid" width="30" height="30" alt="">
+                   </div>
+                   <div class="d-flex justify-content-center">Vous pouvez glisser des fichiers ici pour les ajouter</div>
+
+                 </div>
+                 </div>
+                  <div class="card-footer text-center position-relative">
+
+
+
+                    <div id="sig-file-scroll" class="d-none">
+                        <div class="scroll">
+                      <table class="table h6" id="sig-file-list">
+                        <thead>
+                         <tr>
+                           <th>Select</th>
+                           <th>Type</th>
+                           <th>Fichier</th>
+                           <th>Size</th>
+                         </tr>
+                       </thead>
+                      </table>
+                    </div>
+                    <div class="d-flex justify-content-end p-2">
+                      <button type="button" class="btn btn-primary" onclick="stepper1.next()" id="next-1">Next</button>
+                    </div>
+                    </div>
+                    <div class="d-flex justify-content-start p-2">
+                      <button type="button" class="btn btn-primary" onclick="stepper1.previous()" id="prev">Previous</button>
+                    </div>
+                  </div>
+                 </div>
+               </div>
+                 <!--  dropzone pdf upload  END-->
+              </div>
+                <div id="image-part" class="content" role="tabpanel" aria-labelledby="image-part-trigger">
+                  <!--  dropzone image upload -->
+                   <div class="container p-3 " name="sig-img">
+
+                     <div class="card">
+                       <div class="card-header text-center d-flex justify-content-between">
+                         <div class=""></div>
+                          <p>Insérez ici votre signature manuscrite</p>
+                           <button type="button" class="btn btn-primary" onclick="recap(3);" >Passer cette étape</button>
+                       </div>
+
+                    <div class="card-body">
+                      <div class="d-flex flex-row">
+                        <div class="p-2">
+                          <label class="btn btn-success custom-file-upload">
+                                 <i class="fa fa-plus"></i>
+                                 <span>Add file...</span>
+                                 <input type="file" name="files[]"  id="sig-imgupload" />
+                         </label>
+                        </div>
+                        <div class="p-2">
+                          <button type="button" name="sig-img-delete" class="btn btn-danger delete">
+                            <i class="fa fa-trash"></i>
+                            <span>Delete</span>
+                          </button>
+                        </div>
+                      </div>
+                    <div id="sig-img-dropzone" class="fade well container-fluid d-flex flex-column dropzone"  >
+
+                      <div id="sig-img-icon" class="p-1">
+                        <img src="images/filemanager/upload.jpeg" name="arrow-down-icon" class=" mx-auto d-block img-fluid" width="70" height="70" alt="">
+                      </div>
+                      <div class="d-flex justify-content-center">Vous pouvez glisser des fichiers ici pour les ajouter</div>
+                    </div>
+                    </div>
+                     <div class="card-footer text-center position-relative">
+                       <div id="sig-img-scroll" class=" d-none">
+                         <table class="table h6" >
+                           <thead>
+                            <tr>
+                              <th>Select</th>
+                              <th>Type</th>
+                              <th>Fichier</th>
+                              <th>Size</th>
+                            </tr>
+                            <tbody id="sig-img-list">
+
+                            </tbody>
+                          </thead>
+                         </table>
+                         <div class="d-flex justify-content-end p-2">
+                         <button type="button" class="btn btn-primary"  name="draw">Next</button>
+                        </div>
+                       </div>
+                       <div class="d-flex justify-content-start p-2">
+                         <button type="button" class="btn btn-primary" onclick="stepper1.previous()" id="prev">Previous</button>
+                       </div>
+                     </div>
+                    </div>
+                   </div>
+                   <!--  dropzone image upload END -->
+                </div>
+                  <div id="draw-part" class="content" role="tabpanel" aria-labelledby="draw-part-trigger">
+                   <!-- draw zone begin-->
+                    <div class="container p-3">
+                    <div class="card">
+                    <div class="card-header">
+                    <div class="">
+                      <div class="row d-flex justify-content-between">
+                        <button type="button" name="prev-file" class="btn-sm page-link">&laquo; previous file</button>
+                        <p name="fileName"> </p>
+                        <button type="button" name="next-file" class="btn-sm page-link ">next file &raquo;</button>
+                      </div>
+                      <div class=" row d-flex justify-content-around">
+                        <nav aria-label="Page navigation example">
+                       <ul class="pagination">
+                         <li class="page-item">
+                           <a class="page-link" href="#" id="previous" aria-label="Previous">
+                             <span aria-hidden="true">&laquo;</span>
+                             <span class="sr-only">Previous</span>
+                           </a>
+                         </li>
+                         <li class="page-item">
+                           <a class="page-link" href="#"  aria-label="Page">
+                           Page: <span id="page_num"></span> / <span id="page_count"></span>
+                           </a>
+                         </li>
+
+                         <li class="page-item">
+                           <a class="page-link" href="#" id="next" aria-label="Next">
+                             <span aria-hidden="true">&raquo;</span>
+                             <span class="sr-only">Next</span>
+                           </a>
+                         </li>
+                       </ul>
+                     </nav>
+
+                      </div>
+                    </div>
+                    </div>
+                    <div class="card-body  scroll-canvas d-flex justify-content-center " >
+                     <div class="d-flex justify-content-center">
+                       <canvas id="canvas">
+                       </canvas>
+                     </div>
+                    </div>
+                    <div class="card-footer ">
+                      <div class="d-flex justify-content-between p-2">
+                      <button type="button" class="btn btn-primary" onclick="stepper1.previous()" id="prev">Previous</button>
+                      <button type="button" class="btn btn-primary" name="valider">valider modification</button>
+                      <button type="button" class="btn btn-primary" onclick="recap(4);" >finish</button>
+                      </div>
+                    </div>
+                    </div>
+                    </div>
+                    <script src="./js/canvas.js"></script>
+                    <!-- draw zone end-->
+                  </div>
+                    <div id="sign-part" class="content" role="tabpanel" aria-labelledby="sign-part-trigger">
+                      <!-- recap -->
+                       <div class="container p-3 ">
+
+                         <div class="card">
+                           <div class="card-header text-center d-flex justify-content-between">
+
+                              <h3>Récapitulatif</h3>
+                              <button type="button" class="btn btn-primary active"  name="signer" >Signer</button>
+
+
+                        </div>
+                        <div class="card-body" id ="div-recap">
+                        </div>
+                        <div class="card-footer">
+                          <div class="d-flex justify-content-start p-2">
+                            <button type="button" class="btn btn-primary" onclick="stepper1.previous()" id="prev">Previous</button>
+                          </div>
+                        </div>
+                       </div>
+                       <!--  recap END -->
+                    </div>
+            </div>
+          </div>
+          <script>
+      var stepper1Node = document.querySelector('#stepper1')
+      var stepper1 = new Stepper(document.querySelector('#stepper1'))
+          </script>
+         <!--  stepper end -->
+
+
+
+
+
+
+        </div>
+
+
+      </div>
+    </div>
+  <!--  onglet verify -->
+
+      <div class="tab-pane" id="p2">
+        <h1><b>Signature PDF</b></h1>
+      <div class="container justify-content-center">
+
+
+
+       <!--  dropzone key upload -->
+        <div class="p-2">
+
+          <div class="card">
+            <div class="card-header text-center">
+              <div class="d-flex justify-content-between">
+                <div class="p-2">
+                    Insérez ici votre clé de vérification
+                </div>
+                <div class="ml-auto p-2">
+                  <input type="checkbox" id="change-mode"   data-toggle="toggle" data-width="200" data-on="<i class='fa fa-server'></i> from server" data-off="<i class='fa fa-upload'></i> from disk" data-onstyle="secondary" data-offstyle="secondary">
+                </div>
+              </div>
+
+
+            </div>
+
+         <div class="card-body">
+           <div  class="container" id="upload-disk">
+             <div class="d-flex flex-row">
+               <div class="p-2">
+                 <label class="btn btn-success custom-file-upload">
+                        <i class="fa fa-plus"></i>
+                        <span>Add key...</span>
+                        <input type="file" name="files[]"  id="verify-keyupload" />
+                </label>
+               </div>
+               <div class="p-2">
+                 <button type="button" name="verify-key-delete" class="btn btn-danger delete">
+                   <i class="fa fa-trash"></i>
+                   <span>Delete</span>
+                 </button>
+               </div>
+             </div>
+             <div id="verify-key-dropzone" class="fade well container-fluid d-flex flex-column dropzone"  >
+
+               <div id="verify-key-icon" class="p-1">
+                 <img src="images/filemanager/upload.jpeg" name="arrow-down-icon" class=" mx-auto d-block img-fluid" width="70" height="70" alt="">
+               </div>
+               <div class="d-flex justify-content-center">Vous pouvez glisser des fichiers ici pour les ajouter</div>
+             </div>
+           </div>
+
+
+         <div id="upload-server" class="d-none">
+
+                            <div autocomplete="off" class="d-flex justify-content-center ">
+                                <div class="autocomplete  row  align-items-center">
+                                    <!--end of col-->
+                                    <div class="col-8">
+                                        <input id="search-input" type="text" name="myCountry"  class="form-control  form-control form-control-borderless"   placeholder="Search...">
+                                    </div>
+                                    <!--end of col-->
+                                    <div class="col-4">
+                                        <button class="btn  btn-success" name="search"><i class="fa fa-search"></i> Search </button>
+                                    </div>
+                                    <!--end of col-->
+                                </div>
+                            </div>
+                            <div class="container p-2">
+                              <table id="verify-key-table" class="table table-sm p-2 scroll" >
+                              </table>
+                            </div>
+
+                        <!--end of col-->
+         </div>
+
+         </div>
+          <div class="card-footer text-center position-relative">
+            <div id="verify-key-scroll" class="d-none">
+              <table class="table h6" >
+                <thead>
+                 <tr>
+                   <th></th>
+                   <th></th>
+                   <th>nom</th>
+                   <th>prénom</th>
+                   <th>email</th>
+                   <th>source</th>
+                 </tr>
+                 <tbody id="verify-key-list">
+                 </tbody>
+               </thead>
+              </table>
+            </div>
+          </div>
+         </div>
+        </div>
+         <!--  dropzone key upload END -->
+
+
+         <!--  dropzone pdf upload -->
+         <div class="p-2  d-none" name="pdf-verify">
+           <div class="card">
+             <div class="card-header text-center">
+                Insérez ici vos pdf
+             </div>
+
+          <div class="card-body">
+            <div class="d-flex flex-row">
+              <div class="p-2">
+                <label class="btn btn-success custom-file-upload">
+                       <i class="fa fa-plus"></i>
+                       <span>Add files...</span>
+                       <input type="file" name="files[]" multiple id="verify-fileupload"/>
+               </label>
+              </div>
+              <div class="p-2">
+                <button type="button" name="verify-file-delete-selected" class="btn btn-danger delete">
+                  <i class="fa fa-trash"></i>
+                  <span>Delete selected</span>
+                </button>
+              </div>
+              <div class="p-2">
+                <button type="button" name="verify-file-select-all" class="btn btn-info select">
+                <i class="fa fa-check"></i>
+                <span>Select all</span>
+              </button>
+              </div>
+            </div>
+
+          <div id="verify-file-dropzone" class="fade well container-fluid d-flex flex-column dropzone"  >
+
+            <div id="verify-file-icon" class="p-1">
+              <img src="images/filemanager/upload.jpeg" name="arrow-down-icon"  class=" mx-auto d-block img-fluid" width="30" height="30" alt="">
+            </div>
+            <div class="d-flex justify-content-center">Vous pouvez glisser des fichiers ici pour les ajouter</div>
+
+
+
+          </div>
+
+          </div>
+           <div class="card-footer text-center position-relative">
+             <div id="verify-file-scroll" class="scroll  d-none">
+               <table class="table h6" id="verify-file-list">
+                 <thead>
+                  <tr>
+                    <th>Select</th>
+                    <th>Type</th>
+                    <th>Fichier</th>
+                    <th>Size</th>
+                    <th>Signé le</th>
+                    <th>Signataire</th>
+                    <th>Etat</th>
+                  </tr>
+                </thead>
+               </table>
+             </div>
+             </div>
+          </div>
+        </div>
+       <!--  dropzone pdf upload END -->
+        </div>
+
+      <div class="row justify-content-center">
+        <div class="card  w-75  m-5">
+          <div class="card-header d-flex justify-content-between">
+             <h4 class="card-title"> <b>Tutoriel</b></h4>
+          </div>
+          <div class="card-body">
+             <div class="scroll" name="verify-log">
+               <b>Comment vérifier les signatures</b>
+               <ul>
+                 <li>Sélectionnez ou glissez et déposez la clé de vérification</li>
+                 <li>La zone de dépôt des fichiers devient visible </li>
+                 <li>Sélectionnez ou glissez et déposez les fichiers PDF dans la zone </li>
+                 <li>Les fichiers seront vérifiés automatiquement</li>
+               </ul>
+             </div>
+          </div>
+        </div>
+      </div>
+      </div>
+      <div class="tab-pane" id="p3">
+      <div class="d-flex justify-content-center">
+        <div class="card w-75  m-5 ">
+          <div class="card-header">
+            <h4>Générer une clé</h4>
+          </div>
+          <div class="card-body">
+
+            <form name="key-form" >
+              <div class="form-group col-lg-5">
+                <label for="nom">Nom:</label>
+                <input type="text" class="form-control" placeholder="Enter first name" id="nom">
+                <span class="text-danger"></span>
+              </div>
+              <div class="form-group col-lg-5">
+                <label for="prenom">Prénom:</label>
+                <input type="text" class="form-control" placeholder="Enter last name" id="prenom">
+                <span class="text-danger"></span>
+              </div>
+
+             <div class="form-group col-lg-5">
+               <label for="email">Email address:</label>
+               <input type="email" class="form-control" placeholder="Enter email" id="email">
+               <span class="text-danger"></span>
+             </div>
+             <div class="form-group">
+               <button type="button" name="generate-key" class="btn btn-info">
+                 <i class="fa fa-cog"></i>
+                 <span>Generate</span>
+               </button>
+               <button type="button" disabled name="export-key" class="btn btn-info btn-disabled">
+                 <i class="fa fa-share"></i>
+                 <span>Export</span>
+               </button>
+             </div>
+
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <script type="text/javascript">
+    $(document).bind('dragover', function (e) {
+       e.preventDefault();
+      var dropZones = $('.dropzone'),
+          timeout = window.dropZoneTimeout;
+      if (timeout) {
+          clearTimeout(timeout);
+      } else {
+          dropZones.addClass('in');
+      }
+      var hoveredDropZone = $(e.target).closest(dropZones);
+      dropZones.not(hoveredDropZone).removeClass('hover');
+      hoveredDropZone.addClass('hover');
+      window.dropZoneTimeout = setTimeout(function () {
+          window.dropZoneTimeout = null;
+          dropZones.removeClass('in hover');
+      }, 100);
+  });
+
+
+    </script>
+  </body>
+  </html>
